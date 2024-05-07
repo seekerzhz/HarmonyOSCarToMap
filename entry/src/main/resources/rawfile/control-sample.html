@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <script src="https://webapi.amap.com/maps?v=2.0&key=1ae3b208fcec004751062b013ee633bc&&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar"></script>
+    <title>地图显示</title>
+    <style>
+        html,
+        body,
+        #container {
+          width: 100%;
+          height: 100%;
+        }
+
+        .input-card {
+            width: 150px;
+            top: 10px;
+            left: 10px;
+            bottom: auto;
+        }
+    </style>
+</head>
+<body>
+<!--地图-->
+<div id="container"></div>
+
+
+<!-- 加载地图JSAPI脚本 -->
+<script>
+    console.log("起始");
+    var map = new AMap.Map("container", {
+      zoom: 13, //地图级别
+      mapStyle: "amap://styles/macaron", //设置地图的显示样式
+      rotateEnable:true,
+      pitchEnable:true,
+    });
+    console.log("增加地图");
+
+    var scale = new AMap.Scale(),
+    controlBar = new AMap.ControlBar({
+        position: {
+          top: '10px',
+          right: '10px'
+        }
+    }),
+    overView = new AMap.HawkEye({
+        visible: true
+    }),
+   toolBar = new AMap.ToolBar({
+        position: {
+          top: '110px',
+          right: '40px'
+        }
+    });
+    console.log("刻度线");
+    map.addControl(scale);
+    map.addControl(controlBar);
+    map.addControl(overView);
+    map.addControl(toolBar);
+
+</script>
+</body>
+</html>

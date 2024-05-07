@@ -8,7 +8,7 @@
     <title>HELLO，AMAP!</title>
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
     <style>
-    html,
+    html, 
     body,
     #container {
       height: 100%;
@@ -27,16 +27,16 @@
     }
   </style>
 </head>
-
+<!--1ae3b208fcec004751062b013ee633bc -->
 <body>
 <div id="container"></div>
 <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=1ae3b208fcec004751062b013ee633bc"></script>
 <script type="text/javascript">
     // 创建地图实例
     var map = new AMap.Map("container", {
-      zoom: 13,
-      center: [116.39, 39.92],
-      resizeEnable: true
+        zoom: 18, // 初始化地图层级
+        center: [117.19837, 34.22157], // 初始化地图中心点
+        resizeEnable: true
     });
 
     // 创建点覆盖物
