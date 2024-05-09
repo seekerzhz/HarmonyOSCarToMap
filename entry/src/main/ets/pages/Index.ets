@@ -5,7 +5,10 @@ import webview from '@ohos.web.webview';
 struct WebComponent {
 
   webController : webview.WebviewController = new webview.WebviewController();
-
+  aboutToAppear() {
+    // 配置web开启调试模式
+    webview.WebviewController.setWebDebuggingAccess(true);
+  }
   build() {
 
     Stack() {

@@ -49,10 +49,13 @@
         }
     }),
     map = new AMap.Map("container", {
-      zoom: 16, //地图级别
+      center: [116.40, 39.91],
+      zoom: 20, //地图级别
     });
     map.addControl(scale);
     map.addControl(toolBar);
+    map.addControl(controlBar);
+    map.addControl(overView);
 
     var traffic = new AMap.TileLayer.Traffic({
       autoRefresh: true, //是否自动刷新，默认为false
@@ -65,8 +68,12 @@
         zIndex: 11
     });
 
+    var roadNetLayer = new AMap.TileLayer.RoadNet({
+        zIndex: 10
+    });
 
-    var layerGroup = new AMap.LayerGroup([trafficLayer]);
+
+    var layerGroup = new AMap.LayerGroup([trafficLayer, roadNetLayer]);
     layerGroup.setMap(map);
 
     function toggleScale(checkbox) {
