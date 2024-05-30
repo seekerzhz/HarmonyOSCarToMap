@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>步行</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <script src="https://unpkg.com/sober/dist/sober.min.js"></script>
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: "d77cc9149feb4ba1307df9a5fbf16816",
+        };
+    </script>
+    <script
+            src="https://webapi.amap.com/maps?v=2.0&key=1ae3b208fcec004751062b013ee633bc&&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar,AMap.Walking,AMap.CitySearch"></script>
+    <script src='https://a.amap.com/jsapi_demos/static/citys.js'></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        #container {
+            height: 100%;
+        }
+
+        .input-card {
+            width: 90px;
+            top: 10px;
+            left: 10px;
+            bottom: auto;
+        }
+
+        #panel {
+            position: fixed;
+            background-color: white;
+            max-height: 90%;
+            overflow-y: auto;
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+
+        #panel .amap-call {
+            background-color: #009cf9;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        #panel .amap-lib-driving {
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            overflow: hidden;
+        }
+
+        #pagebottom {
+            position: absolute;
+            width: 90%;
+            bottom: 10%;
+            right: 5%;
+            margin: 10px auto;
+            padding: 6px;
+        }
+        #pagebottom input{
+            margin: auto 14px;
+            appearance: none;
+        }
+    </style>
+</head>
+
+<body>
+<div id="container"></div>
+<s-search id="pagebottom">
+    <input id="from" type="text" placeholder="起点">
+
+    <input id="to" type="text" placeholder="终点">
+    <s-icon-button slot="end" onclick="Driveto()">
+        <s-icon type="arrow_forward"></s-icon>
+    </s-icon-button>
+</s-search>
+<div id="panel"></div>
+
+<script>
+        //基本地图加载
+        var map = new AMap.Map("container", {
+            resizeEnable: true,
+            zoom: 13 //地图显示的缩放级别
+        });
+
+        //构造路线导航类
+        var walking = new AMap.Walking({
+            map: map,
+            panel: "panel"
+        });
+        // 根据起终点名称规划驾车导航路线
+        function Driveto() {
+            let city='徐州';
+            let from=document.querySelector('#from').value;
+            let to=document.querySelector('#to').value;
+            walking.search([
+                { keyword: from, city: city },
+                { keyword: to, city: city }
+            ], function (status, result) {
+                if (status === 'complete') {
+                    log.success('绘制驾车路线完成')
+                } else {
+                    log.error('获取驾车数据失败：' + result)
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

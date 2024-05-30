@@ -1,96 +1,183 @@
 <!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <title>带功能控件的地图</title>
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
-    <script src="https://webapi.amap.com/maps?v=2.0&key=1ae3b208fcec004751062b013ee633bc&&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar"></script>
+    <script src="https://unpkg.com/sober/dist/sober.min.js"></script>
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: "d77cc9149feb4ba1307df9a5fbf16816",
+        };
+    </script>
+    <script
+            src="https://webapi.amap.com/maps?v=2.0&key=1ae3b208fcec004751062b013ee633bc&&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar,AMap.Driving,AMap.CitySearch"></script>
     <script src='https://a.amap.com/jsapi_demos/static/citys.js'></script>
     <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
         }
+
         #container {
             height: 100%;
         }
+
         .input-card {
-            width: 150px;
+            width: 90px;
             top: 10px;
             left: 10px;
             bottom: auto;
         }
+
+        #panel {
+            position: fixed;
+            background-color: white;
+            max-height: 90%;
+            overflow-y: auto;
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+
+        #panel .amap-call {
+            background-color: #009cf9;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        #panel .amap-lib-driving {
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            overflow: hidden;
+        }
+
+        #pagebottom {
+            position: absolute;
+            width: 90%;
+            bottom: 10%;
+            right: 5%;
+            margin: 10px auto;
+            padding: 6px;
+        }
+        #pagebottom input{
+            margin: auto 14px;
+            appearance: none;
+        }
     </style>
 </head>
+
 <body>
 <div id="container"></div>
+<s-search id="pagebottom">
+    <input id="from" type="text" placeholder="起点">
+
+    <input id="to" type="text" placeholder="终点">
+    <s-icon-button slot="end" onclick="Driveto()">
+        <s-icon type="arrow_forward"></s-icon>
+    </s-icon-button>
+</s-search>
+<div id="panel"></div>
 <div class='input-card'>
     <div class="input-item">
-        <input type="checkbox" onclick="toggleScale(this)"/>比例尺
+        <input type="checkbox" onclick="toggleScale(this)" />比例尺
     </div>
 
     <div class="input-item">
-        <input type="checkbox" id="toolbar" onclick="toggleToolBar(this)"/>工具条
+        <input type="checkbox" id="toolbar" onclick="toggleToolBar(this)" />工具条
     </div>
 </div>
+
+
 <script>
-// 比例尺
-    var scale = new AMap.Scale({
-        visible: false
-    }),
-    // 工具条
-    toolBar = new AMap.ToolBar({
-        visible: false,
-        position: {
-          top: '110px',
-          right: '40px'
+        //基本地图加载
+        var map = new AMap.Map("container", {
+            resizeEnable: true,
+            zoom: 13 //地图显示的缩放级别
+        });
+        // 比例尺
+        var scale = new AMap.Scale({
+            visible: false
+        }),
+            // 工具条
+            toolBar = new AMap.ToolBar({
+                visible: false,
+                // position: {
+                //     top: '110px',
+                //     right: '40px'
+                // }
+            });
+
+        var autoOptions = {
+            input: "tipinput"
+        };
+        map.addControl(scale);
+        map.addControl(toolBar);
+
+        var traffic = new AMap.TileLayer.Traffic({
+            autoRefresh: true, //是否自动刷新，默认为false
+            interval: 180, //刷新间隔，默认180s
+            zIndex: 4
+        });
+
+
+        var trafficLayer = new AMap.TileLayer.Traffic({
+            zIndex: 11
+        });
+
+
+        var layerGroup = new AMap.LayerGroup([trafficLayer]);
+        layerGroup.setMap(map);
+
+        function toggleScale(checkbox) {
+            if (checkbox.checked) {
+                scale.show();
+            } else {
+                scale.hide();
+            }
         }
-    }),
-    map = new AMap.Map("container", {
-      zoom: 16, //地图级别
-    });
-    map.addControl(scale);
-    map.addControl(toolBar);
-
-    var traffic = new AMap.TileLayer.Traffic({
-      autoRefresh: true, //是否自动刷新，默认为false
-      interval: 180, //刷新间隔，默认180s
-      zIndex: 4
-    });
-
-
-    var trafficLayer = new AMap.TileLayer.Traffic({
-        zIndex: 11
-    });
-
-
-    var layerGroup = new AMap.LayerGroup([trafficLayer]);
-    layerGroup.setMap(map);
-
-    function toggleScale(checkbox) {
-        if (checkbox.checked) {
-            scale.show();
-        } else {
-            scale.hide();
+        function toggleToolBar(checkbox) {
+            if (checkbox.checked) {
+                showToolBar();
+            } else {
+                hideToolBar();
+            }
         }
-    }
-    function toggleToolBar(checkbox) {
-        if (checkbox.checked) {
-            showToolBar();
-        } else {
-            hideToolBar();
+        function showToolBar() {
+            document.getElementById('toolbar').checked = true;
+            toolBar.show();
         }
-    }
-    function showToolBar() {
-        document.getElementById('toolbar').checked = true;
-        toolBar.show();
-    }
-    function hideToolBar() {
-        document.getElementById('toolbar').checked = false;
-        toolBar.hide();
-    }
-</script>
+        function hideToolBar() {
+            document.getElementById('toolbar').checked = false;
+            toolBar.hide();
+        }
+
+        //构造路线导航类
+        var driving = new AMap.Driving({
+            map: map,
+            panel: "panel"
+        });
+        // 根据起终点名称规划驾车导航路线
+        function Driveto() {
+            let city='徐州';
+            let from=document.querySelector('#from').value;
+            let to=document.querySelector('#to').value;
+            driving.search([
+                { keyword: from, city: city },
+                { keyword: to, city: city }
+            ], function (status, result) {
+                if (status === 'complete') {
+                    log.success('绘制驾车路线完成')
+                } else {
+                    log.error('获取驾车数据失败：' + result)
+                }
+            });
+        }
+    </script>
 </body>
+
 </html>
